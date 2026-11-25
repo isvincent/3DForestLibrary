@@ -1,0 +1,20 @@
+# Dependencies & tooling
+node_modules/
+__pycache__/
+*.pyc
+
+# Editor / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Local Claude Code settings
+.claude/
+
+# Logs
+*.log
+npm-debug.log*
+
+# NOTE: dist/bundle.js 需要提交！它讓使用者「直接雙擊 index.html (file://)」也能執行。

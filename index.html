@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>森嶼書屋 · 心靈微光圖書館｜3D 閱讀與社會情緒學習空間</title>
+  <meta name="description" content="3D 閱讀群島與社會情緒學習（SEL）空間：走訪六座主題閱讀島嶼與動物館員，依心情選書、靜心呼吸、記錄閱讀反思。支援手機、平板、桌機與安裝為 App（PWA）。" />
+  <meta name="theme-color" content="#4f735b" media="(prefers-color-scheme: light)" />
+  <meta name="theme-color" content="#1f2724" media="(prefers-color-scheme: dark)" />
+  <meta name="color-scheme" content="light" />
+  <meta name="format-detection" content="telephone=no" />
+
+  <!-- PWA -->
+  <link rel="manifest" href="./manifest.webmanifest" />
+  <link rel="icon" type="image/svg+xml" href="./icons/icon.svg" />
+  <link rel="icon" type="image/png" sizes="32x32" href="./icons/favicon-32.png" />
+  <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-title" content="森嶼書屋" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+  <!-- Open Graph（分享到社群／通訊軟體時的預覽） -->
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="森嶼書屋 · 心靈微光圖書館" />
+  <meta property="og:description" content="走訪六座主題閱讀島嶼與動物館員，在書頁與呼吸之間安放每一種心情。" />
+  <meta property="og:image" content="./icons/icon-512.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif+TC:wght@600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="./styles.css" />
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "./vendor/three/three.module.js",
+        "three/addons/": "./vendor/three/addons/"
+      }
+    }
+  </script>
+</head>
+<body>
+  <!-- Splash / Loading Screen（PWA 啟動畫面） -->
+  <div id="splashScreen" class="splash-screen" role="status" aria-live="polite">
+    <div class="splash-inner">
+      <img class="splash-logo" src="./icons/icon.svg" alt="" width="86" height="86" />
+      <h2 class="splash-title">森嶼書屋 · 心靈微光圖書館</h2>
+      <p class="splash-sub">正在點亮閱讀群島的燈火……</p>
+      <div class="splash-bar" aria-hidden="true"></div>
+    </div>
+  </div>
+
+  <!-- Network / Update Status -->
+  <div id="netStatus" class="net-status" hidden role="status" aria-live="polite"></div>
+
+  <!-- Full-Viewport 3D Archipelago & Indoor Book Room Stage -->
+  <div id="stage" aria-label="3D 閱讀群島與動物館員互動場景"></div>
+  <div id="css2d-layer"></div>
+
+  <!-- Top-Left Brand Identity & Core Navigation -->
+  <header class="brand-cluster">
+    <div class="brand-card">
+      <div class="brand-school">
+        <span class="brand-school-dot"></span>
+        <span id="schoolNameLabel">校園圖書館 · 閱讀與社會情緒學習專區</span>
+      </div>
+      <h1 class="brand-title">
+        <span id="titleMainLabel">森嶼書屋</span>
+        <span id="titleAccentLabel" class="brand-title-accent">心靈微光圖書館</span>
+      </h1>
+      <p id="subtitleLabel" class="brand-subtitle">
+        走訪六座主題閱讀島嶼與動物館員，在書頁與呼吸之間安放每一種心情。
+      </p>
+    </div>
+
+    <nav class="top-toolbar" aria-label="主功能導覽">
+      <button id="btnMoodMatcher" type="button" class="tool-btn is-primary">
+        <svg class="icon" viewBox="0 0 24 24"><path d="M12 3l2.2 5.4L20 9.2l-4.2 3.8 1.2 5.7L12 15.8 7 18.7l1.2-5.7L4 9.2l5.8-.8L12 3z"/></svg>
+        <span id="lblMoodBtn">今日心情選書</span>
+      </button>
+      <button id="btnOverview" type="button" class="tool-btn">
+        <svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3.6 9h16.8M3.6 15h16.8M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/></svg>
+        <span id="lblOverviewBtn">群島全景</span>
+      </button>
+      <button id="btnDirectory" type="button" class="tool-btn">
+        <svg class="icon" viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h10"/></svg>
+        <span id="lblDirBtn">館區與漂書</span>
+      </button>
+      <button id="btnLang" type="button" class="tool-btn" title="切換中英文介面">
+        <span>EN</span>
+      </button>
+      <button id="btnInstall" type="button" class="tool-btn is-install" hidden title="安裝為 App，可離線使用">
+        <svg class="icon" viewBox="0 0 24 24"><path d="M12 3v12M7 10l5 5 5-5M5 21h14"/></svg>
+        <span>安裝 App</span>
+      </button>
+    </nav>
+  </header>
+
+  <!-- Top-Right Spatial Status & Procedural Library Soundscape -->
+  <div class="top-right-cluster">
+    <div id="spaceStatusBadge" class="mode-badge">
+      <svg class="icon" viewBox="0 0 24 24"><path d="M3 11l9-8 9 8v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1v-9z"/></svg>
+      <span id="spaceStatusText">戶外群島漫遊</span>
+    </div>
+
+    <button id="btnQuickIndoor" type="button" class="tool-btn" hidden>
+      <svg class="icon" viewBox="0 0 24 24"><path d="M15 3h6v18h-6M10 17l5-5-5-5M15 12H3"/></svg>
+      <span id="lblQuickIndoor">返回戶外群島</span>
+    </button>
+
+    <button id="btnSoundToggle" type="button" class="tool-btn">
+      <svg class="icon" viewBox="0 0 24 24"><path d="M11 5L6 9H2v6h4l5 4V5z"/><path d="M15.5 8.5a5 5 0 0 1 0 7M18.8 5.8a9 9 0 0 1 0 12.4"/></svg>
+      <span id="lblSoundBtn">書屋白噪音：關</span>
+    </button>
+  </div>
+
+  <!-- WebAudio Soundscape Mixer Popover -->
+  <section id="soundPopover" class="sound-popover" hidden aria-label="圖書館環境白噪音混音台">
+    <div class="sound-popover-header">
+      <h2 class="sound-popover-title">圖書館環境音混音台</h2>
+      <button id="btnCloseSound" type="button" class="icon-close-btn" aria-label="關閉混音台">
+        <svg class="icon icon-sm" viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+    <div class="sound-channel-list">
+      <label class="sound-channel">
+        <span>窗外細雨</span>
+        <input type="range" min="0" max="100" value="35" data-sound-channel="rain" />
+        <span data-sound-val="rain">35%</span>
+      </label>
+      <label class="sound-channel">
+        <span>暖爐柴火</span>
+        <input type="range" min="0" max="100" value="28" data-sound-channel="hearth" />
+        <span data-sound-val="hearth">28%</span>
+      </label>
+      <label class="sound-channel">
+        <span>林間微風</span>
+        <input type="range" min="0" max="100" value="30" data-sound-channel="breeze" />
+        <span data-sound-val="breeze">30%</span>
+      </label>
+      <label class="sound-channel">
+        <span>翻書沙沙</span>
+        <input type="range" min="0" max="100" value="25" data-sound-channel="pages" />
+        <span data-sound-val="pages">25%</span>
+      </label>
+    </div>
+    <p class="sound-note">透過瀏覽器 WebAudio 即時合成舒緩聲景，點擊動物館員也會響起柔和木琴音。</p>
+  </section>
+
+  <!-- Left Slide-Over Island, Animal Librarian & SEL Book Drawer -->
+  <aside id="zoneDrawer" class="zone-drawer is-hidden" aria-label="閱讀島嶼與選書詳情">
+    <div class="zone-drawer-header">
+      <div>
+        <div id="zoneSelTag" class="zone-sel-tag">SEL 自我覺察</div>
+        <h2 id="zoneTitle" class="zone-title">靜心水岸 · 覺察書席</h2>
+      </div>
+      <button id="btnCloseZone" type="button" class="icon-close-btn" aria-label="關閉館區卡片">
+        <svg class="icon icon-sm" viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+
+    <div id="zoneDrawerBody" class="zone-drawer-body">
+      <p id="zoneDesc" class="zone-desc"></p>
+
+      <!-- Outdoor / Indoor Cozy Room & First-Person Roam Switcher -->
+      <div class="space-switch-bar">
+        <button id="btnToggleIndoor" type="button" class="space-action-btn">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M3 10.5L12 3l9 7.5V20a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1v-9.5z"/><path d="M9 21v-6h6v6"/></svg>
+          <span id="lblToggleIndoor">進入室內書屋</span>
+        </button>
+        <button id="btnToggleFpv" type="button" class="space-action-btn">
+          <svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="5" r="2.5"/><path d="M9 20l1.5-6L9 11l3-2 3 2-1.5 3L15 20"/></svg>
+          <span id="lblToggleFpv">第一人稱漫步</span>
+        </button>
+      </div>
+
+      <!-- Animal Librarian Companion -->
+      <div class="librarian-box">
+        <div class="librarian-top">
+          <div class="librarian-badge">
+            <div id="librarianAvatar" class="librarian-avatar">卡</div>
+            <div>
+              <div id="librarianName" class="librarian-name">卡皮 Capy</div>
+              <div id="librarianRole" class="librarian-role">水豚情緒覺察員</div>
+            </div>
+          </div>
+          <button id="btnGreetAnimal" type="button" class="small-btn is-ghost">打招呼</button>
+        </div>
+        <p id="librarianQuote" class="librarian-quote"></p>
+        <div class="pose-pills" role="group" aria-label="動物陪伴動作">
+          <button type="button" class="pose-pill is-active" data-pose="roam">自由漫步</button>
+          <button type="button" class="pose-pill" data-pose="read">駐足讀書</button>
+          <button type="button" class="pose-pill" data-pose="wave">揮手打氣</button>
+          <button type="button" class="pose-pill" data-pose="rest">靜心呼吸</button>
+        </div>
+      </div>
+
+      <!-- Synchronized Breathing Coach (Highlighted on Island 02, toggleable) -->
+      <div id="breathingWidget" class="breathing-widget" hidden>
+        <div id="breathOrbUi" class="breath-orb-ui"></div>
+        <div class="breath-info">
+          <div id="breathPhaseLabel" class="breath-phase-label">吸氣 4 秒 · 感受當下</div>
+          <div class="breath-sub">跟隨畫面與樹屋中的琥珀光球一起放鬆肩膀</div>
+        </div>
+      </div>
+
+      <!-- Curated SEL Library Books -->
+      <div>
+        <h3 class="section-heading">
+          <span id="lblBookSection">館員推薦療癒書單</span>
+          <span style="font-size:12px;font-weight:400;color:var(--ink-muted);">3 本精選</span>
+        </h3>
+      </div>
+      <div id="bookList" class="book-list"></div>
+
+      <!-- Personal Reading & Emotion Bookmark Note -->
+      <div class="reflection-box">
+        <h3 class="section-heading" style="font-size:14.5px;">心情書籤筆記（僅儲存於本機）</h3>
+        <p id="reflectionPrompt" class="reflection-prompt"></p>
+        <textarea id="reflectionInput" class="reflection-textarea" placeholder="寫下此刻的一句感受或喜歡的書摘……"></textarea>
+        <div class="reflection-actions">
+          <button id="btnSaveBookmark" type="button" class="small-btn">收藏心情書籤</button>
+          <button id="btnExportBookmark" type="button" class="small-btn is-ghost">下載閱讀反思卡 (.txt)</button>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Right Slide-Over Directory & Drift-Book Log Drawer -->
+  <aside id="directoryDrawer" class="directory-drawer is-hidden" aria-label="館區索引與跨島漂書動態">
+    <div class="zone-drawer-header">
+      <div>
+        <div class="zone-sel-tag">ARCHIPELAGO DIRECTORY</div>
+        <h2 class="zone-title" style="font-size:19px;">閱讀島嶼與漂書串連</h2>
+      </div>
+      <button id="btnCloseDirectory" type="button" class="icon-close-btn" aria-label="關閉索引抽屜">
+        <svg class="icon icon-sm" viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+
+    <div class="dir-tabs">
+      <button type="button" class="dir-tab is-active" data-dir-tab="islands">六大閱讀館區</button>
+      <button type="button" class="dir-tab" data-dir-tab="flows">跨島漂書路線</button>
+    </div>
+
+    <div class="dir-search-wrap">
+      <input id="dirSearchInput" type="search" class="dir-search" placeholder="搜尋動物館員、SEL 能力或書名……" />
+    </div>
+
+    <div id="dirList" class="dir-list"></div>
+  </aside>
+
+  <!-- Mood-to-Book Matcher Modal -->
+  <div id="moodModalBackdrop" class="modal-backdrop" hidden>
+    <div class="mood-modal" role="dialog" aria-modal="true" aria-labelledby="moodModalTitle">
+      <div class="mood-modal-top">
+        <div>
+          <div class="zone-sel-tag">MOOD &amp; BOOK CURATION</div>
+          <h2 id="moodModalTitle" class="mood-modal-title">今天，你的心裡是什麼天氣？</h2>
+          <p class="mood-modal-lead">
+            選擇最貼近現在狀態的一張心情書籤，動物館員會帶你飛往專屬的閱讀角落與療癒好書。
+          </p>
+        </div>
+        <button id="btnCloseMoodModal" type="button" class="icon-close-btn" aria-label="關閉心情選書視窗">
+          <svg class="icon icon-sm" viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></svg>
+        </button>
+      </div>
+      <div id="moodGrid" class="mood-grid"></div>
+    </div>
+  </div>
+
+  <!-- On-Screen D-Pad for First-Person Roaming -->
+  <div id="fpvPad" class="fpv-pad" hidden aria-label="第一人稱漫步方向鍵">
+    <div></div>
+    <button type="button" class="fpv-key" data-move="forward" aria-label="前進">▲</button>
+    <div></div>
+    <button type="button" class="fpv-key" data-move="left" aria-label="左移">◀</button>
+    <button type="button" class="fpv-key" data-move="backward" aria-label="後退">▼</button>
+    <button type="button" class="fpv-key" data-move="right" aria-label="右移">▶</button>
+  </div>
+
+  <!-- Toast Notification -->
+  <div id="toastBanner" class="toast-banner" hidden role="status" aria-live="polite"></div>
+
+  <!-- Bottom Floating Capsule HUD (Time-of-Day + Simulation Controls) -->
+  <footer class="bottom-hud" aria-label="四時光影與場景控制列">
+    <div class="hud-clock">
+      <span id="hudClockTime" class="hud-clock-time">12:00</span>
+      <span id="hudClockSub" class="hud-clock-sub">暖晝閱讀</span>
+    </div>
+
+    <button type="button" class="hud-pill" data-time="dawn">清晨 06</button>
+    <button type="button" class="hud-pill is-active" data-time="day">暖晝 12</button>
+    <button type="button" class="hud-pill" data-time="dusk">夕照 17</button>
+    <button type="button" class="hud-pill" data-time="night">星夜 21</button>
+
+    <div class="hud-divider"></div>
+
+    <button id="btnToggleLabels" type="button" class="hud-pill is-active">島嶼名牌</button>
+    <button id="btnToggleCouriers" type="button" class="hud-pill is-active">漂書小隊</button>
+    <button id="btnToggleArcs" type="button" class="hud-pill is-active">共讀軌跡</button>
+    <button id="btnBirdsEye" type="button" class="hud-pill">鳥瞰地圖</button>
+    <button id="btnPauseSim" type="button" class="hud-pill">暫停動態</button>
+  </footer>
+
+  <!-- Bottom-Right Tweaks Toggle & Live Design Parameters Panel -->
+  <button id="btnTweaks" type="button" class="tweaks-toggle-btn" aria-expanded="false">
+    <svg class="icon icon-sm" viewBox="0 0 24 24"><path d="M4 21v-7M4 10V3M12 21v-9M12 8V3M20 21v-5M20 12V3M1 14h6M9 8h6M17 16h6"/></svg>
+    <span>Tweaks</span>
+  </button>
+
+  <section id="tweaksPanel" class="tweaks-panel" hidden aria-label="Tweaks 即時參數調整">
+    <div class="tweaks-header">
+      <h2 class="tweaks-title">Tweaks</h2>
+      <button id="btnCloseTweaks" type="button" class="icon-close-btn" aria-label="關閉 Tweaks">
+        <svg class="icon icon-sm" viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+
+    <div class="tweak-field">
+      <label for="tweakSchoolInput">學校／圖書館標頭名稱</label>
+      <input id="tweakSchoolInput" type="text" value="校園圖書館 · 閱讀與社會情緒學習專區" />
+    </div>
+
+    <div class="tweak-field">
+      <label for="tweakSurfaceTheme">介面卡片視覺主題</label>
+      <select id="tweakSurfaceTheme">
+        <option value="parchment">羊皮紙晨霧（預設溫暖淺色）</option>
+        <option value="timber">靜夜深林木質（沉浸深色）</option>
+        <option value="classroom">教室大屏高對比（投影清晰）</option>
+      </select>
+    </div>
+
+    <div class="tweak-field">
+      <label for="tweakParticles">螢火蟲／微光書塵密度</label>
+      <select id="tweakParticles">
+        <option value="normal">柔和微光（預設）</option>
+        <option value="lush">豐富星塵</option>
+        <option value="off">關閉粒子</option>
+      </select>
+    </div>
+
+    <div class="tweak-field">
+      <label for="tweakCameraLens">鏡頭透視感</label>
+      <select id="tweakCameraLens">
+        <option value="44">標準自然視野 (44°)</option>
+        <option value="32">繪本微縮模型感 (32°)</option>
+        <option value="54">開闊廣角視野 (54°)</option>
+      </select>
+    </div>
+  </section>
+
+  <script src="./pwa.js"></script>
+  <script>
+    // 自動支援「本地伺服器 / GitHub Pages (http/https)」與「直接雙擊開啟 (file://)」兩種執行模式
+    if (window.location.protocol === "file:") {
+      var bundleScript = document.createElement("script");
+      bundleScript.src = "./dist/bundle.js";
+      document.body.appendChild(bundleScript);
+    } else {
+      var moduleScript = document.createElement("script");
+      moduleScript.type = "module";
+      moduleScript.src = "./app.js";
+      document.body.appendChild(moduleScript);
+    }
+  </script>
+</body>
+</html>

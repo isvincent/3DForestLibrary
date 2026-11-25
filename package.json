@@ -1,0 +1,16 @@
+{
+  "name": "woodland-isles-sel-library",
+  "version": "2.0.0",
+  "private": true,
+  "type": "module",
+  "description": "森嶼書屋 · 心靈微光圖書館｜3D 閱讀與社會情緒學習空間（RWD + PWA）",
+  "scripts": {
+    "start": "node build.mjs && node server.mjs",
+    "build": "node build.mjs",
+    "serve": "node server.mjs",
+    "icons": "python tools/make-icons.py"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
